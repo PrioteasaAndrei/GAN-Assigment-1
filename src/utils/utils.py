@@ -3,8 +3,16 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
 import seaborn as sns
 import torch
+from math import sqrt, log, exp, pi
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_moons
+import seaborn as sns
+import torch
+sns.set(style='whitegrid')
 
-random_seed = 42 # for reproductibility
+
+RANDOM_SEED = 42 # for reproductibility
 
 ## set cuda device
 
@@ -15,6 +23,40 @@ if torch.cuda.is_available():
 else:
     # If no GPU is available, use the CPU
     device = torch.device("cpu")
+
+
+def plot_moons(X,y):
+    # Plot the dataset
+    plt.figure(figsize=(8, 6))
+    plt.scatter(X[y == 0][:, 0], X[y == 0][:, 1], color='b', label='Class 0')
+    plt.scatter(X[y == 1][:, 0], X[y == 1][:, 1], color='r', label='Class 1')
+
+    plt.title("Moon-Shaped Dataset")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.legend()
+    plt.grid(True)
+
+    plt.show()
+
+
+class Gaussian:
+    "Model univariate Gaussian"
+    def __init__(self, mu, sigma):
+        #mean and standard deviation
+        self.mu = mu
+        self.sigma = sigma
+
+    #probability density function
+    def pdf(self, datum):
+        "Probability of a data point given the current parameters"
+        u = (datum - self.mu) / abs(self.sigma)
+        y = (1 / (sqrt(2 * pi) * abs(self.sigma))) * exp(-u * u / 2)
+        return y
+    
+    def __repr__(self):
+        return 'Gaussian({0:4.6}, {1:4.6})'.format(self.mu, self.sigma)
+
 
 
 
