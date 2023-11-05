@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import make_moons
 import seaborn as sns
 import torch
+from scipy.stats import multivariate_normal
+
 sns.set(style='whitegrid')
 
 
@@ -118,3 +120,49 @@ def MMD(x, y, kernel):
 
 
     return torch.mean(XX + YY - 2. * XY)
+
+
+
+def train_GMM(data,n_components=2,max_iterations=100):
+
+    # Initialize parameters
+    n_samples, n_features = data.shape
+
+    # Initialize the parameters for the Gaussian components
+    means = np.random.rand(n_components, n_features)
+    covariances = np.array([np.identity(n_features) for _ in range(n_components)])
+    weights = np.ones(n_components) / n_components
+
+    # EM Algorithm
+    for iteration in range(max_iterations):
+        # Expectation step
+        responsibilities = np.zeros((n_samples, n_components))
+        for k in range(n_components):
+            responsibilities[:, k] = weights[k] * multivariate_normal.pdf(data, mean=means[k], cov=covariances[k])
+
+        responsibilities /= responsibilities.sum(axis=1, keepdims=True)
+
+        # Maximization step
+        Nk = responsibilities.sum(axis=0)
+        weights = Nk / n_samples
+        means = np.dot(responsibilities.T, data) / Nk[:, np.newaxis]
+        covariances = [(np.dot(responsibilities[:, k] * (data - means[k]).T, data - means[k]) / Nk[k]).tolist() for k in range(n_components)]
+
+    # Generate data from the estimated multivariate Gaussian
+    estimated_data = np.zeros((n_samples, n_features))
+    for k in range(n_components):
+        estimated_data += responsibilities[:, k][:, np.newaxis] * np.random.multivariate_normal(means[k], covariances[k], size=n_samples)
+
+
+    return estimated_data, means, covariances, weights
+
+
+
+def plot_estimated_real_two_moons(data,estimated_data):
+    # Plot the original data and estimated data
+    plt.scatter(data[:, 0], data[:, 1], label="Original Data from two moons", alpha=0.8)
+    plt.scatter(estimated_data[:, 0], estimated_data[:, 1], label="Estimated Data as a Gaussian", alpha=0.3)
+    plt.xlabel("Dimension 1")
+    plt.ylabel("Dimension 2")
+    plt.legend()
+    plt.show()
