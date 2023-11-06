@@ -10,6 +10,7 @@ from sklearn.datasets import make_moons
 import seaborn as sns
 import torch
 from scipy.stats import multivariate_normal
+from scipy.stats import norm
 
 sns.set(style='whitegrid')
 
