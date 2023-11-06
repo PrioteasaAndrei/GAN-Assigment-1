@@ -166,3 +166,4 @@ def plot_estimated_real_two_moons(data,estimated_data):
     plt.ylabel("Dimension 2")
     plt.legend()
     plt.show()
+
