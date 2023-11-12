@@ -162,7 +162,7 @@ def train_GMM(data,n_components=2,max_iterations=100):
 def plot_estimated_real_two_moons(data,estimated_data):
     # Plot the original data and estimated data
     plt.scatter(data[:, 0], data[:, 1], label="Original Data from two moons", alpha=0.8)
-    plt.scatter(estimated_data[:, 0], estimated_data[:, 1], label="Estimated Data as a Gaussian", alpha=0.3)
+    plt.scatter(estimated_data[:, 0], estimated_data[:, 1], label="Generated Data", alpha=0.3)
     plt.xlabel("Dimension 1")
     plt.ylabel("Dimension 2")
     plt.legend()
